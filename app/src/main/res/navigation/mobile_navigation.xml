@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="net.syllabus.whatsoup.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:name="net.syllabus.whatsoup.ui.week.WeekFragment"
+        android:label="@string/title_week"
+        tools:layout="@layout/fragment_week" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
