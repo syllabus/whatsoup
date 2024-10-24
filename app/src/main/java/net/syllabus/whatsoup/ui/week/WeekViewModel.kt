@@ -76,4 +76,20 @@ class WeekViewModel : ViewModel() {
     }
     val fri2: LiveData<String> = _fri2
 
+    fun onGenerate(menus : List<String>) {
+        _sat1.postValue(menus[0])
+        _sat2.postValue(menus[1])
+        _sun1.postValue(menus[2])
+        _sun2.postValue(menus[3])
+        _mon1.postValue(menus[4])
+        _mon2.postValue(menus[5])
+        _tue1.postValue(menus[6])
+        _tue2.postValue(menus[7])
+        _wed1.postValue(menus[8])
+        _wed2.postValue(menus[9])
+        _thu1.postValue(menus[10])
+        _thu2.postValue(menus[11])
+        _fri1.postValue(menus[12])
+        _fri2.postValue(menus[13])
+    }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
@@ -27,6 +28,12 @@ class WeekFragment : Fragment() {
 
         _binding = FragmentWeekBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        binding.btnGenerate.setOnClickListener({
+            val toast = Toast.makeText(context, "en cours de calcul...", 3)
+            toast.show()
+            generate(homeViewModel)
+        });
 
         val sat1View: TextView = binding.sat1
         homeViewModel.sat1.observe(viewLifecycleOwner) {
@@ -99,6 +106,63 @@ class WeekFragment : Fragment() {
         }
 
         return root
+    }
+
+    fun generate(homeViewModel : WeekViewModel) {
+        val simples = arrayOf(
+            "Knackies",
+            "Steaks hachés",
+            "Poissons Panés",
+            "Oeufs",
+            "Saucisses",
+            "Escalopes de poulet/dinde",
+            "Cordons bleus",
+            "Buns",
+            "Jambon"
+        );
+
+        val avec = arrayOf(
+            "Haricots verts",
+            "Petits pois / Carottes",
+            "Epinards / Poireaux surgelés",
+            "Galette de légumes",
+            "Ratatouille",
+            "Carottes rapées",
+            "Courgettes",
+            "Frites",
+            "Purée",
+            "Semoule",
+            "Quinoa",
+            "Polenta",
+            "Riz"
+        );
+
+        var plats = mutableListOf(
+            "Paupiettes <br/> Riz",
+            "Old El Paso",
+            "Semoule <br/> Ratatouille",
+            "Boeuf bourguignon",
+            "Pot au feu",
+            "Quenelles / riz",
+            "Gratin (chou-fleur,endives-jambon,courge...)",
+            "Sushis, raclette, fondue, tartiflette",
+            "Choucroute",
+            "Saumon <br/> Riz",
+            "Cassoulet",
+            "Piperade",
+            "Croques-monsieurs",
+            "Petit salé aux lentilles"
+        );
+
+        var i = 0
+        var menus = mutableListOf<String>()
+        while (i < 14) {
+            plats.shuffle()
+            val plat = plats.removeAt(0)
+            menus.add(plat)
+            i++
+        }
+        homeViewModel.onGenerate(menus)
     }
 
     override fun onDestroyView() {
