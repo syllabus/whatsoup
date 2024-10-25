@@ -26,8 +26,8 @@ public class WeekTemplate {
     }
 
     public static class MealDefinition {
-        MEAL_TYPE type;
-        String customisation;
+        public MEAL_TYPE type;
+        public  String customisation;
 
         private MealDefinition(MEAL_TYPE type) {
             this(type, null);
@@ -39,7 +39,7 @@ public class WeekTemplate {
         }
     }
 
-    private List<MealDefinition> template;
+    public List<MealDefinition> template;
 
     public static WeekTemplate BASIC = new WeekTemplate(
             Arrays.asList(

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
+import net.syllabus.whatsoup.model.WeekTemplate
 
 class WeekFragment : Fragment() {
 
@@ -109,19 +110,19 @@ class WeekFragment : Fragment() {
     }
 
     fun generate(homeViewModel : WeekViewModel) {
-        val simples = arrayOf(
+        val simples = mutableListOf(
             "Knackies",
             "Steaks hachés",
             "Poissons Panés",
             "Oeufs",
             "Saucisses",
-            "Escalopes de poulet/dinde",
+            "Escalopes de poulet / dinde",
             "Cordons bleus",
             "Buns",
             "Jambon"
         );
 
-        val avec = arrayOf(
+        val avec = mutableListOf(
             "Haricots verts",
             "Petits pois / Carottes",
             "Epinards / Poireaux surgelés",
@@ -138,31 +139,23 @@ class WeekFragment : Fragment() {
         );
 
         var plats = mutableListOf(
-            "Paupiettes <br/> Riz",
+            "Paupiettes / Riz",
             "Old El Paso",
-            "Semoule <br/> Ratatouille",
+            "Semoule / Ratatouille",
             "Boeuf bourguignon",
             "Pot au feu",
             "Quenelles / riz",
             "Gratin (chou-fleur,endives-jambon,courge...)",
             "Sushis, raclette, fondue, tartiflette",
             "Choucroute",
-            "Saumon <br/> Riz",
+            "Saumon / Riz",
             "Cassoulet",
             "Piperade",
             "Croques-monsieurs",
             "Petit salé aux lentilles"
         );
 
-        var i = 0
-        var menus = mutableListOf<String>()
-        while (i < 14) {
-            plats.shuffle()
-            val plat = plats.removeAt(0)
-            menus.add(plat)
-            i++
-        }
-        homeViewModel.onGenerate(menus)
+        homeViewModel.onGenerate(simples, avec, plats, WeekTemplate.BASIC)
     }
 
     override fun onDestroyView() {
