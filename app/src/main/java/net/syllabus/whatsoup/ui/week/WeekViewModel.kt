@@ -77,6 +77,26 @@ class WeekViewModel : ViewModel() {
     }
     val fri2: LiveData<String> = _fri2
 
+    fun fromString (string : String) {
+        var i = 0;
+        val fields =  arrayOf(_sat1, _sat2, _sun1, _sun2, _mon1, _mon2, _tue1, _tue2, _wed1, _wed2, _thu1, _thu2, _fri1, _fri2);
+        for (plat in string.split("/*/")) {
+            fields[i].postValue(plat)
+            i++
+        }
+    }
+
+    override fun toString () : String {
+        var s = ""
+        for (field in arrayOf(_sat1, _sat2, _sun1, _sun2, _mon1, _mon2, _tue1, _tue2, _wed1, _wed2, _thu1, _thu2, _fri1, _fri2)) {
+            s = s + field.value
+            if (field != _fri2) {
+                s = s + "/*/"
+            }
+        }
+        return s
+    }
+
     fun onGenerate(simples : MutableList<String>, withs : MutableList<String>, meals : MutableList<String>, template : WeekTemplate) {
 
         simples.shuffle();

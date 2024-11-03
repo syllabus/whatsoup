@@ -1,5 +1,6 @@
 package net.syllabus.whatsoup.ui.week
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
 import net.syllabus.whatsoup.model.WeekTemplate
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileWriter
 
 class WeekFragment : Fragment() {
 
@@ -34,6 +38,20 @@ class WeekFragment : Fragment() {
             val toast = Toast.makeText(context, "en cours de calcul...", 3)
             toast.show()
             generate(homeViewModel)
+        });
+
+        binding.btnSave.setOnClickListener({
+            val toast = Toast.makeText(context, "c'est en train de save...", 3)
+            toast.show()
+            context?.openFileOutput("plats.txt", Context.MODE_PRIVATE).use { it?.write(homeViewModel.toString().toByteArray(Charsets.UTF_8))}
+        });
+
+        binding.btnLoad.setOnClickListener({
+            val toast = Toast.makeText(context, "ça charge...", 3)
+            toast.show()
+            context?.openFileInput("plats.txt").use { stream ->
+                stream?.bufferedReader().use { homeViewModel.fromString(it?.readText().toString()) }
+            }
         });
 
         val sat1View: TextView = binding.sat1
