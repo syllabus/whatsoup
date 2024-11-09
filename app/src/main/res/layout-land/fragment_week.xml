@@ -55,6 +55,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:clickable="false"
+                    android:editable="false"
                     android:text="Mardi" />
 
                 <TextView
@@ -90,49 +92,50 @@
                     android:layout_weight="1"
                     android:text="Midi" />
 
-                <TextView
+                <EditText
                     android:id="@+id/sat1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:editable="true"
                     android:text="Patates" />
 
-                <TextView
+                <EditText
                     android:id="@+id/sun1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/mon1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/tue1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/wed1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/thu1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/fri1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -151,49 +154,49 @@
                     android:layout_weight="1"
                     android:text="Soir" />
 
-                <TextView
+                <EditText
                     android:id="@+id/sat2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="plouf" />
 
-                <TextView
+                <EditText
                     android:id="@+id/sun2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/mon2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/tue2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/wed2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/thu2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="" />
 
-                <TextView
+                <EditText
                     android:id="@+id/fri2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
 import net.syllabus.whatsoup.model.WeekTemplate
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileWriter
 
 class WeekFragment : Fragment() {
 
@@ -54,74 +52,34 @@ class WeekFragment : Fragment() {
             }
         });
 
-        val sat1View: TextView = binding.sat1
-        homeViewModel.sat1.observe(viewLifecycleOwner) {
-            sat1View.text = it
-        }
+        val map = mapOf(
 
-        val sat2View: TextView = binding.sat2
-        homeViewModel.sat2.observe(viewLifecycleOwner) {
-            sat2View.text = it
-        }
+            binding.sat1 to homeViewModel.sat1,
+            binding.sat2 to homeViewModel.sat2,
+            binding.sun1 to homeViewModel.sun1,
+            binding.sun2 to homeViewModel.sun2,
+            binding.mon1 to homeViewModel.mon1,
+            binding.mon2 to homeViewModel.mon2,
+            binding.tue1 to homeViewModel.tue1,
+            binding.tue2 to homeViewModel.tue2,
+            binding.wed1 to homeViewModel.wed1,
+            binding.wed2 to homeViewModel.wed2,
+            binding.thu1 to homeViewModel.thu1,
+            binding.thu2 to homeViewModel.thu2,
+            binding.fri1 to homeViewModel.fri1,
+            binding.fri2 to homeViewModel.fri2,
+        )
 
-        val sun1View: TextView = binding.sun1
-        homeViewModel.sun1.observe(viewLifecycleOwner) {
-            sun1View.text = it
-        }
-
-        val sun2View: TextView = binding.sun2
-        homeViewModel.sun2.observe(viewLifecycleOwner) {
-            sun2View.text = it
-        }
-
-        val mon1View: TextView = binding.mon1
-        homeViewModel.mon1.observe(viewLifecycleOwner) {
-            mon1View.text = it
-        }
-
-        val mon2View: TextView = binding.mon2
-        homeViewModel.mon2.observe(viewLifecycleOwner) {
-            mon2View.text = it
-        }
-
-        val tue1View: TextView = binding.tue1
-        homeViewModel.tue1.observe(viewLifecycleOwner) {
-            tue1View.text = it
-        }
-
-        val tue2View: TextView = binding.tue2
-        homeViewModel.tue2.observe(viewLifecycleOwner) {
-            tue2View.text = it
-        }
-
-        val wed1View: TextView = binding.wed1
-        homeViewModel.wed1.observe(viewLifecycleOwner) {
-            wed1View.text = it
-        }
-
-        val wed2View: TextView = binding.wed2
-        homeViewModel.wed2.observe(viewLifecycleOwner) {
-            wed2View.text = it
-        }
-
-        val thu1View: TextView = binding.thu1
-        homeViewModel.thu1.observe(viewLifecycleOwner) {
-            thu1View.text = it
-        }
-
-        val thu2View: TextView = binding.thu2
-        homeViewModel.thu2.observe(viewLifecycleOwner) {
-            thu2View.text = it
-        }
-
-        val fri1View: TextView = binding.fri1
-        homeViewModel.fri1.observe(viewLifecycleOwner) {
-            fri1View.text = it
-        }
-
-        val fri2View: TextView = binding.fri2
-        homeViewModel.fri2.observe(viewLifecycleOwner) {
-            fri2View.text = it
+        map.forEach { view, model ->
+            val editTextView: EditText = view
+            model.observe(viewLifecycleOwner) {
+                if (!editTextView.getText().toString().equals(it)) {
+                    editTextView.setText(it)
+                }
+            }
+            editTextView.doOnTextChanged { text, start, before, count ->
+                model.value = text.toString()
+            }
         }
 
         return root
