@@ -1,6 +1,9 @@
 package net.syllabus.whatsoup.ui.week
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +13,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import net.syllabus.whatsoup.TodayWidget2
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
 import net.syllabus.whatsoup.model.WeekTemplate
 
@@ -42,6 +46,8 @@ class WeekFragment : Fragment() {
             val toast = Toast.makeText(context, "c'est en train de save...", 3)
             toast.show()
             context?.openFileOutput("plats.txt", Context.MODE_PRIVATE).use { it?.write(homeViewModel.toString().toByteArray(Charsets.UTF_8))}
+
+            updateWidgets()
         });
 
         binding.btnLoad.setOnClickListener({
@@ -83,6 +89,22 @@ class WeekFragment : Fragment() {
         }
 
         return root
+    }
+
+    fun updateWidgets() {
+        val intent: Intent = Intent(
+            context,
+            TodayWidget2::class.java
+        )
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE")
+        val ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(
+            ComponentName(
+                requireContext(),
+                TodayWidget2::class.java
+            )
+        )
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        context?.sendBroadcast(intent)
     }
 
     fun generate(homeViewModel : WeekViewModel) {

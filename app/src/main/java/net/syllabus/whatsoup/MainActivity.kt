@@ -13,6 +13,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    object Constants {
+        const val SEP = "~"
+        const val SAVE_INTENT = "net.syllabus.whatsoup.MENU_SAVED"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

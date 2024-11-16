@@ -3,6 +3,7 @@ package net.syllabus.whatsoup.ui.week
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import net.syllabus.whatsoup.MainActivity
 import net.syllabus.whatsoup.model.WeekTemplate
 
 class WeekViewModel : ViewModel() {
@@ -80,7 +81,7 @@ class WeekViewModel : ViewModel() {
     fun fromString (string : String) {
         var i = 0;
         val fields =  arrayOf(_sat1, _sat2, _sun1, _sun2, _mon1, _mon2, _tue1, _tue2, _wed1, _wed2, _thu1, _thu2, _fri1, _fri2);
-        for (plat in string.split("/*/")) {
+        for (plat in string.split(MainActivity.Constants.SEP)) {
             fields[i].postValue(plat)
             i++
         }
@@ -91,7 +92,7 @@ class WeekViewModel : ViewModel() {
         for (field in arrayOf(_sat1, _sat2, _sun1, _sun2, _mon1, _mon2, _tue1, _tue2, _wed1, _wed2, _thu1, _thu2, _fri1, _fri2)) {
             s = s + field.value
             if (field != _fri2) {
-                s = s + "/*/"
+                s = s + MainActivity.Constants.SEP
             }
         }
         return s
