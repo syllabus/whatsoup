@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import net.syllabus.whatsoup.NextPlatWidget
 import net.syllabus.whatsoup.TodayWidget2
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
 import net.syllabus.whatsoup.model.WeekTemplate
@@ -47,7 +48,8 @@ class WeekFragment : Fragment() {
             toast.show()
             context?.openFileOutput("plats.txt", Context.MODE_PRIVATE).use { it?.write(homeViewModel.toString().toByteArray(Charsets.UTF_8))}
 
-            updateWidgets()
+            updateWidgets(TodayWidget2::class.java)
+            updateWidgets(NextPlatWidget::class.java)
         });
 
         binding.btnLoad.setOnClickListener({
@@ -91,16 +93,16 @@ class WeekFragment : Fragment() {
         return root
     }
 
-    fun updateWidgets() {
+    fun updateWidgets(clazz : Class<*>) {
         val intent: Intent = Intent(
             context,
-            TodayWidget2::class.java
+            clazz
         )
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE")
         val ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(
             ComponentName(
                 requireContext(),
-                TodayWidget2::class.java
+                clazz
             )
         )
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)

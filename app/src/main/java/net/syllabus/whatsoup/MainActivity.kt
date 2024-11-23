@@ -109,10 +109,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         val cal1830 = Calendar.getInstance()
-        cal1130.set(Calendar.HOUR_OF_DAY, 18)
-        cal1130.set(Calendar.MINUTE, 30)
-        cal1130.set(Calendar.SECOND, 0)
-        cal1130.set(Calendar.MILLISECOND, 0)
+        cal1830.set(Calendar.HOUR_OF_DAY, 18)
+        cal1830.set(Calendar.MINUTE, 30)
+        cal1830.set(Calendar.SECOND, 0)
+        cal1830.set(Calendar.MILLISECOND, 0)
 
         alarmManager.
         setRepeating(

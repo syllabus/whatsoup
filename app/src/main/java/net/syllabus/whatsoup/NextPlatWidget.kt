@@ -7,13 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.text.format.DateFormat
 import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
 import java.util.Calendar
-
 
 /**
  * Implementation of App Widget functionality.
  */
-class TodayWidget2 : AppWidgetProvider() {
+class NextPlatWidget : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -37,7 +37,7 @@ class TodayWidget2 : AppWidgetProvider() {
         val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
         val thisWidget: ComponentName = ComponentName(
             context.applicationContext,
-            TodayWidget2::class.java
+            NextPlatWidget::class.java
         )
         val appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
         if (appWidgetIds != null && appWidgetIds.size > 0) {
@@ -64,9 +64,11 @@ private fun updateAppWidget(
     val midi = widgetText.split(MainActivity.Constants.SEP)[index]
     val soir = widgetText.split(MainActivity.Constants.SEP)[index+1]
 
+    val nextPlat = if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) > 13) soir else midi
+
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.today_widget2)
-    views.setTextViewText(R.id.appwidget_text, "Aujourd'hui "+DateFormat.format("EEEE", cal)+"\nMidi : "+midi+"\nSoir : "+soir)
+    views.setTextViewText(R.id.appwidget_text, "Prochain plat : "+nextPlat)
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
