@@ -66,7 +66,7 @@ internal fun updateAppWidget(
 
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.today_widget2)
-    views.setTextViewText(R.id.appwidget_text, "Aujourd'hui "+DateFormat.format("EEEE", cal)+"\nMidi:"+midi+"\nSoir:"+soir)
+    views.setTextViewText(R.id.appwidget_text, "Aujourd'hui "+DateFormat.format("EEEE", cal)+"\nMidi : "+midi+"\nSoir : "+soir)
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
