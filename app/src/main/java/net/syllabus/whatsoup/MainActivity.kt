@@ -1,125 +1,189 @@
 package net.syllabus.whatsoup
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import net.syllabus.whatsoup.databinding.ActivityMainBinding
-import java.util.Calendar
+import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.core.widget.doAfterTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.GsonBuilder
 
+class MainActivity : Activity() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: WeekPlanAdapter
+    private lateinit var settingsButton: Button
+    private lateinit var generateButton: Button
+    private lateinit var clearButton: Button
+    private lateinit var saveButton: Button
+    private lateinit var weekPlan: WeekPlan
+    private val sharedPrefName = "meal_prefs"
+    private var mealList: MealList = MealList.default()
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-
-    object Constants {
-        const val SEP = "~"
-        const val SAVE_INTENT = "net.syllabus.whatsoup.MENU_SAVED"
-    }
-
+    private val daysOfWeek = WeekPlan.defaultTemplate().getDays()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        loadData()
 
-        val navView: BottomNavigationView = binding.navView
+        recyclerView = findViewById(R.id.weekPlanRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = WeekPlanAdapter()
+        recyclerView.adapter = adapter
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        settingsButton = findViewById(R.id.settings_button)
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java).also{
+                it.putExtra("meal_list", mealList)
+            })
+        }
 
-        createNotificationChannel()
-        scheduleRecurringNotification()
+        generateButton = findViewById(R.id.generate_button)
+        generateButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON GENERATE")
+            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+            Log.d("WHATSOUP", "NEW PLAN: " + weekPlan)
+            adapter.updateData(daysOfWeek, mealList, weekPlan)
+            Log.d("WHATSOUP", "GENERATE IS DONE")
+        }
+
+        clearButton = findViewById(R.id.clear_button)
+        clearButton.setOnClickListener {
+            mealList = MealList.default()
+            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+            adapter.updateData(daysOfWeek, mealList, weekPlan)
+        }
+
+        saveButton = findViewById(R.id.save_button)
+        saveButton.setOnClickListener {
+            saveData()
+        }
+
+        adapter.updateData(daysOfWeek, mealList, weekPlan)
     }
 
-    private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is not in the Support Library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "un nom"
-            val descriptionText = "une description"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("my_channel_id", name, importance).apply {
-                description = descriptionText
+    override fun onResume() {
+        super.onResume()
+        loadData()
+        adapter.updateData(daysOfWeek, mealList, weekPlan)
+    }
+    private fun saveData(){
+        val sharedPref = getSharedPreferences(sharedPrefName, MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+        val jsonMeals = gson.toJson(mealList)
+        editor.putString("meal_list", jsonMeals)
+        Log.d("WHATSOUP", "saving meals " + jsonMeals)
+
+        val jsonWeekPlan = gson.toJson(weekPlan)
+        editor.putString("week_plan", jsonWeekPlan)
+        Log.d("WHATSOUP", "saving plan " + jsonWeekPlan)
+
+        editor.apply()
+    }
+    private fun loadData() {
+        val sharedPref = getSharedPreferences(sharedPrefName, MODE_PRIVATE)
+
+        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+        val jsonMeals = sharedPref.getString("meal_list", null)
+        if (jsonMeals != null) {
+            val type = com.google.gson.reflect.TypeToken.getParameterized(MutableList::class.java, MealList::class.java).type
+            try {
+                mealList = gson.fromJson(jsonMeals, type)
+                Log.d("WHATSOUP", "loaded meals " + jsonMeals)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mealList = MealList.default()
             }
-            // Register the channel with the system.
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+        } else {
+            mealList = MealList.default()
+        }
+
+        val jsonWeekPlan = sharedPref.getString("week_plan", null)
+        if(jsonWeekPlan != null){
+            try {
+                weekPlan = gson.fromJson(jsonWeekPlan, WeekPlan::class.java)
+                Log.d("WHATSOUP", "loaded plan " + jsonWeekPlan)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+            }
+        } else {
+            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
         }
     }
 
-    private fun scheduleRecurringNotification(){
-        val notificationIntent = Intent(this, NotifReceiver::class.java)
-        notificationIntent.putExtra("notificationId", 2)
-        notificationIntent.putExtra("title", "Titel")
-        notificationIntent.putExtra("message", "maissaje")
-        val pendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            0,
-            notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+    inner class WeekPlanAdapter() : RecyclerView.Adapter<WeekPlanAdapter.ItemViewHolder>() {
 
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val interval = 1 * 24 * 60 * 60 * 1000 // interval in milliseconds
-  //      val interval = 60000 // for every minute during testing
-/*
-        val test = Calendar.getInstance()
-        test.add(Calendar.MINUTE, 1)
+        private var daysOfWeek: List<String> = WeekPlan.defaultTemplate().getDays()
+        private var mealList: MealList = MealList.default()
+        private var weekPlan : WeekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+        private var preventEvents : Boolean = false
 
-        alarmManager.
-        setExact(
-            AlarmManager.RTC_WAKEUP,
-            test.timeInMillis,
-            pendingIntent
-        )
-*/
-        val cal1130 = Calendar.getInstance()
-        cal1130.set(Calendar.HOUR_OF_DAY, 11)
-        cal1130.set(Calendar.MINUTE, 30)
-        cal1130.set(Calendar.SECOND, 0)
-        cal1130.set(Calendar.MILLISECOND, 0)
+        override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ItemViewHolder {
+            val view = layoutInflater.inflate(R.layout.week_plan_item, parent, false)
+            Log.d("WHATSOUP", "Adding ItemHolder " + viewType)
+            return ItemViewHolder(view)
+        }
 
-        alarmManager.
-        setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            cal1130.timeInMillis,
-            interval.toLong(),
-            pendingIntent
-        )
+        override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+            Log.d("WHATSOUP", "Binding ItemHolder " + position)
+            val day = daysOfWeek[position]
+            holder.dayTextView.text = day
 
-        val cal1830 = Calendar.getInstance()
-        cal1830.set(Calendar.HOUR_OF_DAY, 18)
-        cal1830.set(Calendar.MINUTE, 30)
-        cal1830.set(Calendar.SECOND, 0)
-        cal1830.set(Calendar.MILLISECOND, 0)
+            preventEvents = true
+            val currentLunch = weekPlan.getMeal(WeekPlan.PairKey(day, true))
+            holder.lunchEditText.setText(currentLunch?.name)
 
-        alarmManager.
-        setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            cal1830.timeInMillis,
-            interval.toLong(),
-            pendingIntent
-        )
+            val currentDinner = weekPlan.getMeal(WeekPlan.PairKey(day, false))
+            holder.dinnerEditText.setText(currentDinner?.name)
+            preventEvents = false
+
+            Log.d("WHATSOUP", "Display " + day + ": " + currentLunch + " AND " + currentDinner)
+
+            holder.lunchEditText.doAfterTextChanged {
+                if (!preventEvents) {
+                    weekPlan.setMeal(
+                        WeekPlan.PairKey(day, true),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+                    )
+                    Log.d("WHATSOUP", "Save " + day + " lunch: " + it.toString())
+                }
+            }
+
+            holder.dinnerEditText.doAfterTextChanged {
+                if (!preventEvents) {
+                    weekPlan.setMeal(
+                        WeekPlan.PairKey(day, false),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+                    )
+                    Log.d("WHATSOUP", "Save " + day + " dinner: " + it.toString())
+                }
+            }
+
+
+        }
+
+        override fun getItemCount(): Int {
+            return daysOfWeek.size
+        }
+        fun updateData(daysOfWeek: List<String>, mealList: MealList, weekPlan: WeekPlan){
+            this.daysOfWeek = daysOfWeek
+            this.mealList = mealList
+            this.weekPlan = weekPlan
+            notifyDataSetChanged()
+
+        }
+        inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val dayTextView: TextView = itemView.findViewById(R.id.dayTextView)
+            val lunchEditText: EditText = itemView.findViewById(R.id.lunchEditText)
+            val dinnerEditText: EditText = itemView.findViewById(R.id.dinnerEditText)
+        }
     }
 }
