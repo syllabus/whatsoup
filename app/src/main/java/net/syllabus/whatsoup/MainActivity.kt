@@ -18,7 +18,7 @@ class MainActivity : Activity() {
     private lateinit var adapter: WeekPlanAdapter
     private lateinit var settingsButton: Button
     private lateinit var generateButton: Button
-    private lateinit var clearButton: Button
+    private lateinit var loadButton: Button
     private lateinit var saveButton: Button
     private lateinit var weekPlan: WeekPlan
     private val sharedPrefName = "meal_prefs"
@@ -48,30 +48,32 @@ class MainActivity : Activity() {
             Log.d("WHATSOUP", "CLICK ON GENERATE")
             weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
             Log.d("WHATSOUP", "NEW PLAN: " + weekPlan)
-            adapter.updateData(daysOfWeek, mealList, weekPlan)
+            adapter.updateData(weekPlan)
             Log.d("WHATSOUP", "GENERATE IS DONE")
         }
 
-        clearButton = findViewById(R.id.clear_button)
-        clearButton.setOnClickListener {
-            mealList = MealList.default()
-            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
-            adapter.updateData(daysOfWeek, mealList, weekPlan)
+        loadButton = findViewById(R.id.load_button)
+        loadButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON LOAD")
+            loadData()
+            adapter.updateData(weekPlan)
         }
 
         saveButton = findViewById(R.id.save_button)
         saveButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON SAVE")
             saveData()
         }
 
-        adapter.updateData(daysOfWeek, mealList, weekPlan)
+        adapter.updateData(weekPlan)
     }
 
     override fun onResume() {
         super.onResume()
         loadData()
-        adapter.updateData(daysOfWeek, mealList, weekPlan)
+        adapter.updateData(weekPlan)
     }
+
     private fun saveData(){
         val sharedPref = getSharedPreferences(sharedPrefName, MODE_PRIVATE)
         val editor = sharedPref.edit()
@@ -121,10 +123,7 @@ class MainActivity : Activity() {
 
     inner class WeekPlanAdapter() : RecyclerView.Adapter<WeekPlanAdapter.ItemViewHolder>() {
 
-        private var daysOfWeek: List<String> = WeekPlan.defaultTemplate().getDays()
-        private var mealList: MealList = MealList.default()
-        private var weekPlan : WeekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
-        private var preventEvents : Boolean = false
+        private var displayedWeekPlan : WeekPlan = WeekPlan()
 
         override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ItemViewHolder {
             val view = layoutInflater.inflate(R.layout.week_plan_item, parent, false)
@@ -134,56 +133,55 @@ class MainActivity : Activity() {
 
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             Log.d("WHATSOUP", "Binding ItemHolder " + position)
-            val day = daysOfWeek[position]
+            val day = displayedWeekPlan.getDays()[position]
             holder.dayTextView.text = day
 
-            preventEvents = true
-            val currentLunch = weekPlan.getMeal(WeekPlan.PairKey(day, true))
+            val currentLunch = displayedWeekPlan.getMeal(WeekPlan.PairKey(day, true))
             holder.lunchEditText.setText(currentLunch?.name)
 
-            val currentDinner = weekPlan.getMeal(WeekPlan.PairKey(day, false))
+            val currentDinner = displayedWeekPlan.getMeal(WeekPlan.PairKey(day, false))
             holder.dinnerEditText.setText(currentDinner?.name)
-            preventEvents = false
 
             Log.d("WHATSOUP", "Display " + day + ": " + currentLunch + " AND " + currentDinner)
-
-            holder.lunchEditText.doAfterTextChanged {
-                if (!preventEvents) {
-                    weekPlan.setMeal(
-                        WeekPlan.PairKey(day, true),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
-                    )
-                    Log.d("WHATSOUP", "Save " + day + " lunch: " + it.toString())
-                }
-            }
-
-            holder.dinnerEditText.doAfterTextChanged {
-                if (!preventEvents) {
-                    weekPlan.setMeal(
-                        WeekPlan.PairKey(day, false),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
-                    )
-                    Log.d("WHATSOUP", "Save " + day + " dinner: " + it.toString())
-                }
-            }
-
 
         }
 
         override fun getItemCount(): Int {
-            return daysOfWeek.size
+            return displayedWeekPlan.getDays().size
         }
-        fun updateData(daysOfWeek: List<String>, mealList: MealList, weekPlan: WeekPlan){
-            this.daysOfWeek = daysOfWeek
-            this.mealList = mealList
-            this.weekPlan = weekPlan
-            notifyDataSetChanged()
 
+        fun updateData(weekPlan: WeekPlan){
+            this.displayedWeekPlan = weekPlan
+            notifyDataSetChanged()
         }
+
         inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val dayTextView: TextView = itemView.findViewById(R.id.dayTextView)
             val lunchEditText: EditText = itemView.findViewById(R.id.lunchEditText)
             val dinnerEditText: EditText = itemView.findViewById(R.id.dinnerEditText)
+
+            init {
+                lunchEditText.doAfterTextChanged {
+                    val d = dayTextView.text.toString()
+                    Log.d("WHATSOUP", "text changed for lunch " + d)
+                    displayedWeekPlan.setMeal(
+                        WeekPlan.PairKey(d, true),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+
+                    )
+                    Log.d("WHATSOUP", "Save " + d + " lunch: " + it.toString())
+                }
+
+                dinnerEditText.doAfterTextChanged {
+                    val d = dayTextView.text.toString()
+                    Log.d("WHATSOUP", "text changed for dinner " + d)
+                    displayedWeekPlan.setMeal(
+                        WeekPlan.PairKey(d, false),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+                    )
+                    Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
+                }
+            }
         }
     }
 }
