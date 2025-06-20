@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "net.syllabus.whatsoup"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "net.syllabus.whatsoup"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 34
+        versionCode = 3
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

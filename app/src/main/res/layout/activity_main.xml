@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Weekly Meal Plan"
         android:textSize="24sp"
-        android:gravity="center"
+        android:gravity="top"
         android:padding="16dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -20,12 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_gravity="center"
         tools:listitem="@layout/week_plan_item" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         android:layout_gravity="center_horizontal">
         <Button
             android:id="@+id/generate_button"
@@ -53,5 +56,11 @@
             android:text="Edit Meals" />
     </LinearLayout>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:id="@+id/bottom_navigation"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </LinearLayout>

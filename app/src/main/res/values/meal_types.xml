@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="MealTypes">
+        <item>HARDCODED</item>
+        <item>MEAL</item>
+        <item>BUILT</item>
+    </array>
+</resources>

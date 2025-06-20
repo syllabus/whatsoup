@@ -6,28 +6,63 @@
     android:padding="8dp"
     android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/dayTextView"
-        android:layout_width="0dp"
+
+    <EditText
+        android:id="@+id/dayText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Day"
-        android:textSize="16sp"
-        android:layout_marginRight="8dp" />
+        android:ems="5"
+        android:inputType="text"
+        android:text="Name" />
 
-
-    <Spinner
-        android:id="@+id/lunchSpinner"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginRight="8dp"/>
+        android:layout_weight="20"
+        android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/dinnerSpinner"
-        android:layout_width="0dp"
+        <Spinner
+            android:id="@+id/lunchSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:entries="@array/MealTypes" />
+
+        <EditText
+            android:id="@+id/lunchText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="5"
+            android:inputType="text"
+            android:text="Name"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="20"
+        android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/dinnerSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:entries="@array/MealTypes" />
 
+        <EditText
+            android:id="@+id/dinnerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="5"
+            android:inputType="text"
+            android:text="Name"
+            android:visibility="invisible" />
+    </LinearLayout>
 </LinearLayout>

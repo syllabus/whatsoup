@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeButton"
+        android:title="@string/menu" />
+
+    <item
+        android:id="@+id/templateButton"
+        android:title="@string/modele" />
+
+    <item
+        android:id="@+id/settingsButton"
+        android:title="@string/mangeages" />
+
+</menu>
