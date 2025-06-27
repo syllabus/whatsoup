@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "WeeklyMealPlanner"
+rootProject.name = "WhatSoup"
 include(":app")

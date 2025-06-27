@@ -1,91 +1,110 @@
 package net.syllabus.whatsoup
 
+import android.app.Activity.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.syllabus.whatsoup.MainActivity.WeekPlanAdapter
-import net.syllabus.whatsoup.MainActivity.WeekPlanAdapter.ItemViewHolder
+import com.google.gson.GsonBuilder
+import net.syllabus.whatsoup.databinding.FragmentTemplateBinding
+import net.syllabus.whatsoup.databinding.FragmentWeekBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TemplateFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TemplateFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private val sharedPrefName = "meal_prefs"
+    private val templateName = "week_template"
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: WeekPlanAdapter
-    private val sharedPrefName = "meal_prefs"
+    private lateinit var adapter: TemplateAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-        setContentView(R.layout.activity_main)
+    private lateinit var template: WeekPlan
 
-        loadData()
+    private var _binding: FragmentTemplateBinding? = null
 
-        recyclerView = view?.findViewById(R.id.templateRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = WeekPlanAdapter()
-        recyclerView.adapter = adapter
-
-    }
+    private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_template, container, false)
+    ): View {
+
+        _binding = FragmentTemplateBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+
+        return root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TemplateFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TemplateFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onResume() {
+        super.onResume()
+        loadData()
+
+        recyclerView = requireView().findViewById(R.id.templateRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        adapter = TemplateAdapter()
+        recyclerView.adapter = adapter
+
+        adapter.updateData(template)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun saveData() {
+        val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
+        val editor = sharedPref?.edit()
+
+        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+
+        val jsonTemplate = gson.toJson(template)
+        editor?.putString(templateName, jsonTemplate)
+        Log.d("WHATSOUP", "saving template " + jsonTemplate)
+
+        editor?.apply()
+    }
+
+    private fun loadData() {
+        val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
+
+        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+        val jsonTemplate = sharedPref?.getString(templateName, null)
+        if (jsonTemplate != null) {
+            val type = com.google.gson.reflect.TypeToken.getParameterized(
+                MutableList::class.java,
+                MealList::class.java
+            ).type
+            try {
+                template = gson.fromJson(jsonTemplate, type)
+                Log.d("WHATSOUP", "loaded template " + jsonTemplate)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                template = WeekPlan.defaultTemplate()
             }
+        } else {
+            template = WeekPlan.defaultTemplate()
+        }
+
     }
 
     inner class TemplateAdapter() : RecyclerView.Adapter<TemplateAdapter.ItemViewHolder>() {
 
-        private var displayedTemplate : WeekPlan = WeekPlan()
+        private var displayedTemplate: WeekPlan = WeekPlan()
 
-        override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ItemViewHolder {
+        override fun onCreateViewHolder(
+            parent: android.view.ViewGroup,
+            viewType: Int
+        ): ItemViewHolder {
             val view = layoutInflater.inflate(R.layout.template_item, parent, false)
             Log.d("WHATSOUP", "Adding ItemHolder " + viewType)
             return ItemViewHolder(view)
@@ -112,8 +131,8 @@ class TemplateFragment : Fragment() {
             return displayedTemplate.getDays().size
         }
 
-        fun updateData(weekPlan: WeekPlan){
-            this.displayedTemplate = weekPlan
+        fun updateData(aTemplate: WeekPlan) {
+            this.displayedTemplate = aTemplate
             notifyDataSetChanged()
         }
 
@@ -135,7 +154,15 @@ class TemplateFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-                        lunchText?.visibility = if (id == 2L) View.VISIBLE else View.INVISIBLE
+                        lunchText?.setEnabled(id == 2L)
+                        val d = dayTextView.text.toString()
+                        Log.d("WHATSOUP", "spinner changed for lunch " + d)
+                        displayedTemplate.setMeal(
+                            WeekPlan.PairKey(d, true),
+                            Meal(Meal.MealType.entries[id.toInt()], "patates")
+                        )
+                        Log.d("WHATSOUP", "Save " + d + " lunch")
+                        saveData()
                     }
                 }
                 dinnerSpinner?.onItemSelectedListener =
@@ -149,9 +176,37 @@ class TemplateFragment : Fragment() {
                             position: Int,
                             id: Long
                         ) {
-                            dinnerText?.visibility = if (id == 2L) View.VISIBLE else View.INVISIBLE
+                            dinnerText?.setEnabled(id == 2L)
+                            val d = dayTextView.text.toString()
+                            Log.d("WHATSOUP", "spinner changed for dinner " + d)
+                            displayedTemplate.setMeal(
+                                WeekPlan.PairKey(d, false),
+                                Meal(Meal.MealType.entries[id.toInt()], "patates")
+                            )
+                            Log.d("WHATSOUP", "Save " + d + " dinner")
+                            saveData()
                         }
                     }
+                lunchText?.doAfterTextChanged {
+                    val d = dayTextView.text.toString()
+                    Log.d("WHATSOUP", "text changed for lunch " + d)
+                    displayedTemplate.setMeal(
+                        WeekPlan.PairKey(d, true),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+                    )
+                    Log.d("WHATSOUP", "Save " + d + " lunch: " + it.toString())
+                    saveData()
+                }
+                dinnerText?.doAfterTextChanged {
+                    val d = dayTextView.text.toString()
+                    Log.d("WHATSOUP", "text changed for dinner " + d)
+                    displayedTemplate.setMeal(
+                        WeekPlan.PairKey(d, false),
+                        Meal(Meal.MealType.HARDCODED, it.toString())
+                    )
+                    Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
+                    saveData()
+                }
             }
         }
     }
