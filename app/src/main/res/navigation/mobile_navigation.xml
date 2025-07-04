@@ -17,5 +17,10 @@
         android:label="@string/title_template"
         tools:layout="@layout/fragment_template" />
 
+    <fragment
+        android:id="@+id/navigation_lists"
+        android:name="net.syllabus.whatsoup.ListsFragment"
+        android:label="@string/title_lists"
+        tools:layout="@layout/fragment_lists" />
 
 </navigation>

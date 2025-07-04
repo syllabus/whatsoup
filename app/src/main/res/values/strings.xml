@@ -11,4 +11,9 @@
     <string name="title_template">Modele</string>
     <string name="button_generate">Generate</string>
     <string name="button_default">Reset</string>
+    <string name="title_basic">Basic</string>
+    <string name="title_meals">Meals</string>
+    <string name="title_addon">Addon (with basic)</string>
+    <string name="button_add">Add</string>
+    <string name="title_lists">Listes</string>
 </resources>
