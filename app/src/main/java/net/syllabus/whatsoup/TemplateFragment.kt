@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.widget.doAfterTextChanged
@@ -24,6 +25,7 @@ class TemplateFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TemplateAdapter
+    private lateinit var resetButton: Button
 
     private lateinit var template: WeekPlan
 
@@ -42,6 +44,20 @@ class TemplateFragment : Fragment() {
 
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        resetButton = requireView().findViewById(R.id.button_default)
+        resetButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON RESET")
+            resetData()
+            loadData()
+            Log.d("WHATSOUP", "DEFAULT TEMPLATE: " + template)
+            adapter.updateData(template)
+            Log.d("WHATSOUP", "RESET IS DONE")
+        }
     }
 
     override fun onResume() {
@@ -74,16 +90,21 @@ class TemplateFragment : Fragment() {
         editor?.apply()
     }
 
+    private fun resetData() {
+        val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
+        val editor = sharedPref?.edit()
+
+        editor?.remove(templateName)
+        editor?.apply()
+    }
+
     private fun loadData() {
         val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
 
         val gson = GsonBuilder().enableComplexMapKeySerialization().create()
         val jsonTemplate = sharedPref?.getString(templateName, null)
         if (jsonTemplate != null) {
-            val type = com.google.gson.reflect.TypeToken.getParameterized(
-                MutableList::class.java,
-                MealList::class.java
-            ).type
+            val type = WeekPlan::class.java
             try {
                 template = gson.fromJson(jsonTemplate, type)
                 Log.d("WHATSOUP", "loaded template " + jsonTemplate)
@@ -140,10 +161,10 @@ class TemplateFragment : Fragment() {
 
         inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val dayTextView: EditText = itemView.findViewById(R.id.dayText)
-            val lunchSpinner: Spinner? = view?.findViewById(R.id.lunchSpinner)
-            val lunchText: EditText? = view?.findViewById(R.id.lunchText)
-            val dinnerSpinner: Spinner? = view?.findViewById(R.id.dinnerSpinner)
-            val dinnerText: EditText? = view?.findViewById(R.id.lunchText)
+            val lunchSpinner: Spinner = itemView.findViewById(R.id.lunchSpinner)
+            val lunchText: EditText = itemView.findViewById(R.id.lunchText)
+            val dinnerSpinner: Spinner = itemView.findViewById(R.id.dinnerSpinner)
+            val dinnerText: EditText = itemView.findViewById(R.id.dinnerText)
 
             init {
                 lunchSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -161,7 +182,7 @@ class TemplateFragment : Fragment() {
                         Log.d("WHATSOUP", "spinner changed for lunch " + d)
                         lunchText?.setText(displayedTemplate.getMeal(WeekPlan.PairKey(d, true))?.name)
                         Log.d("WHATSOUP", "Save " + d + " lunch")
-                        //saveData()
+                        saveData()
                     }
                 }
                 dinnerSpinner?.onItemSelectedListener =
@@ -180,7 +201,7 @@ class TemplateFragment : Fragment() {
                             Log.d("WHATSOUP", "spinner changed for dinner " + d)
                             dinnerText?.setText(displayedTemplate.getMeal(WeekPlan.PairKey(d, false))?.name)
                             Log.d("WHATSOUP", "Save " + d + " dinner")
-                            //saveData()
+                            saveData()
                         }
                     }
                 lunchText?.doAfterTextChanged {
@@ -188,20 +209,20 @@ class TemplateFragment : Fragment() {
                     Log.d("WHATSOUP", "text changed for lunch " + d)
                     displayedTemplate.setMeal(
                         WeekPlan.PairKey(d, true),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
+                        Meal(Meal.MealType.values()[lunchSpinner.selectedItemPosition], it.toString())
                     )
                     Log.d("WHATSOUP", "Save " + d + " lunch: " + it.toString())
-                    //saveData()
+                    saveData()
                 }
                 dinnerText?.doAfterTextChanged {
                     val d = dayTextView.text.toString()
                     Log.d("WHATSOUP", "text changed for dinner " + d)
                     displayedTemplate.setMeal(
                         WeekPlan.PairKey(d, false),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
+                        Meal(Meal.MealType.values()[dinnerSpinner.selectedItemPosition], it.toString())
                     )
                     Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
-                    //saveData()
+                    saveData()
                 }
             }
         }

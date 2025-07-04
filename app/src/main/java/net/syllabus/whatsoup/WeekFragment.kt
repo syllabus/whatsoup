@@ -53,7 +53,7 @@ class WeekFragment : Fragment() {
         generateButton = requireView().findViewById(R.id.button_generate)
         generateButton.setOnClickListener {
             Log.d("WHATSOUP", "CLICK ON GENERATE")
-            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+            weekPlan = mealList.randomWeek(template)
             Log.d("WHATSOUP", "NEW PLAN: " + weekPlan)
             adapter.updateData(weekPlan)
             Log.d("WHATSOUP", "GENERATE IS DONE")
@@ -109,7 +109,7 @@ class WeekFragment : Fragment() {
 
         val jsonTemplate = sharedPref?.getString(templateName, null)
         if (jsonTemplate != null) {
-            val type = com.google.gson.reflect.TypeToken.getParameterized(MutableList::class.java, MealList::class.java).type
+            val type = WeekPlan::class.java
             try {
                 template = gson.fromJson(jsonTemplate, type)
                 Log.d("WHATSOUP", "loaded template " + jsonTemplate)
@@ -123,8 +123,9 @@ class WeekFragment : Fragment() {
 
         val jsonWeekPlan = sharedPref?.getString(planName, null)
         if(jsonWeekPlan != null){
+            val type = WeekPlan::class.java
             try {
-                weekPlan = gson.fromJson(jsonWeekPlan, WeekPlan::class.java)
+                weekPlan = gson.fromJson(jsonWeekPlan, type)
                 Log.d("WHATSOUP", "loaded plan " + jsonWeekPlan)
             } catch (e: Exception) {
                 e.printStackTrace()
