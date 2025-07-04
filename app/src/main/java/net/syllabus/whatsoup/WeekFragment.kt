@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
@@ -24,6 +25,7 @@ class WeekFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: WeekPlanAdapter
+    private lateinit var generateButton: Button
 
     private lateinit var mealList: MealList
     private lateinit var template: WeekPlan
@@ -43,6 +45,19 @@ class WeekFragment : Fragment() {
         val root: View = binding.root
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        generateButton = requireView().findViewById(R.id.button_generate)
+        generateButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON GENERATE")
+            weekPlan = mealList.randomWeek(WeekPlan.defaultTemplate())
+            Log.d("WHATSOUP", "NEW PLAN: " + weekPlan)
+            adapter.updateData(weekPlan)
+            Log.d("WHATSOUP", "GENERATE IS DONE")
+        }
     }
 
     override fun onResume() {
@@ -103,7 +118,7 @@ class WeekFragment : Fragment() {
                 template = WeekPlan.defaultTemplate()
             }
         } else {
-            weekPlan = WeekPlan.defaultTemplate()
+            template = WeekPlan.defaultTemplate()
         }
 
         val jsonWeekPlan = sharedPref?.getString(planName, null)

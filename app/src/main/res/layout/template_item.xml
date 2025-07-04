@@ -37,8 +37,7 @@
             android:layout_weight="1"
             android:ems="5"
             android:inputType="text"
-            android:text="Name"
-            android:visibility="invisible" />
+            android:text="Name" />
     </LinearLayout>
 
     <LinearLayout

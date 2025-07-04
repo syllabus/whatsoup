@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_week" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_template"
         android:name="net.syllabus.whatsoup.TemplateFragment"
         android:label="@string/title_template"
         tools:layout="@layout/fragment_template" />

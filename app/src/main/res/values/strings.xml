@@ -9,4 +9,5 @@
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_week">Menu</string>
     <string name="title_template">Modele</string>
+    <string name="button_generate">Generate</string>
 </resources>

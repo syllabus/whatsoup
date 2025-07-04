@@ -117,11 +117,13 @@ class TemplateFragment : Fragment() {
 
             val currentLunch = displayedTemplate.getMeal(WeekPlan.PairKey(day, true))
             holder.lunchSpinner?.setSelection(currentLunch?.type!!.ordinal)
+            holder.lunchText?.setEnabled(currentLunch?.type!!.ordinal == Meal.MealType.HARDCODED.ordinal)
             holder.lunchText?.setText(currentLunch?.name)
 
             val currentDinner = displayedTemplate.getMeal(WeekPlan.PairKey(day, false))
-            holder.dinnerSpinner?.setSelection(currentLunch?.type!!.ordinal)
-            holder.dinnerText?.setText(currentLunch?.name)
+            holder.dinnerSpinner?.setSelection(currentDinner?.type!!.ordinal)
+            holder.dinnerText?.setEnabled(currentDinner?.type!!.ordinal == Meal.MealType.HARDCODED.ordinal)
+            holder.dinnerText?.setText(currentDinner?.name)
 
             Log.d("WHATSOUP", "Display " + day + ": " + currentLunch + " AND " + currentDinner)
 
@@ -154,15 +156,12 @@ class TemplateFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-                        lunchText?.setEnabled(id == 2L)
+                        lunchText?.setEnabled(id == Meal.MealType.HARDCODED.ordinal.toLong())
                         val d = dayTextView.text.toString()
                         Log.d("WHATSOUP", "spinner changed for lunch " + d)
-                        displayedTemplate.setMeal(
-                            WeekPlan.PairKey(d, true),
-                            Meal(Meal.MealType.entries[id.toInt()], "patates")
-                        )
+                        lunchText?.setText(displayedTemplate.getMeal(WeekPlan.PairKey(d, true))?.name)
                         Log.d("WHATSOUP", "Save " + d + " lunch")
-                        saveData()
+                        //saveData()
                     }
                 }
                 dinnerSpinner?.onItemSelectedListener =
@@ -176,15 +175,12 @@ class TemplateFragment : Fragment() {
                             position: Int,
                             id: Long
                         ) {
-                            dinnerText?.setEnabled(id == 2L)
+                            dinnerText?.setEnabled(id == Meal.MealType.HARDCODED.ordinal.toLong())
                             val d = dayTextView.text.toString()
                             Log.d("WHATSOUP", "spinner changed for dinner " + d)
-                            displayedTemplate.setMeal(
-                                WeekPlan.PairKey(d, false),
-                                Meal(Meal.MealType.entries[id.toInt()], "patates")
-                            )
+                            dinnerText?.setText(displayedTemplate.getMeal(WeekPlan.PairKey(d, false))?.name)
                             Log.d("WHATSOUP", "Save " + d + " dinner")
-                            saveData()
+                            //saveData()
                         }
                     }
                 lunchText?.doAfterTextChanged {
@@ -195,7 +191,7 @@ class TemplateFragment : Fragment() {
                         Meal(Meal.MealType.HARDCODED, it.toString())
                     )
                     Log.d("WHATSOUP", "Save " + d + " lunch: " + it.toString())
-                    saveData()
+                    //saveData()
                 }
                 dinnerText?.doAfterTextChanged {
                     val d = dayTextView.text.toString()
@@ -205,7 +201,7 @@ class TemplateFragment : Fragment() {
                         Meal(Meal.MealType.HARDCODED, it.toString())
                     )
                     Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
-                    saveData()
+                    //saveData()
                 }
             }
         }
