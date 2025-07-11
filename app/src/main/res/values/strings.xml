@@ -16,4 +16,5 @@
     <string name="title_addon">Addon (with basic)</string>
     <string name="button_add">Add</string>
     <string name="title_lists">Listes</string>
+    <string name="button_reset">Reset</string>
 </resources>

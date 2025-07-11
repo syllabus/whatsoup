@@ -95,7 +95,7 @@ class WeekFragment : Fragment() {
         val gson = GsonBuilder().enableComplexMapKeySerialization().create()
         val jsonMeals = sharedPref?.getString(mealListName, null)
         if (jsonMeals != null) {
-            val type = com.google.gson.reflect.TypeToken.getParameterized(MutableList::class.java, MealList::class.java).type
+            val type = MealList::class.java
             try {
                 mealList = gson.fromJson(jsonMeals, type)
                 Log.d("WHATSOUP", "loaded meals " + jsonMeals)

@@ -20,11 +20,21 @@ data class MealList (
         val selection = when (meal?.type) {
             null -> "Langue de boeuf"
             Meal.MealType.HARDCODED -> meal.name
-            Meal.MealType.MEAL -> localPlats.removeAt(0)
-            Meal.MealType.BUILT -> localSimples.removeAt(0) + " / " + localAvec.removeAt(0)
+            Meal.MealType.MEAL -> takeOne(localPlats)
+            Meal.MealType.BUILT -> takeOne(localSimples) + " / " + takeOne(localAvec)
         }
 
         return Meal(Meal.MealType.HARDCODED, selection)
+    }
+
+    private fun takeOne(aList: MutableList<String>): String {
+        if (aList == null || aList.size == 0) {
+            return "langue ed boeuf"
+        } else if (aList.size == 1) {
+            return aList.get(0)
+        } else {
+            return aList.removeAt(0)
+        }
     }
 
     fun randomWeek(template: WeekPlan):WeekPlan {
