@@ -17,4 +17,8 @@
     <string name="button_add">Add</string>
     <string name="title_lists">Listes</string>
     <string name="button_reset">Reset</string>
+    <string name="title_nextweek">Prochain</string>
+    <string name="button_setweek">SAVE</string>
+    <string name="button_getweek">LOAD</string>
+    <string name="button_share">SHARE</string>
 </resources>

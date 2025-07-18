@@ -7,6 +7,11 @@
         android:title="@string/title_week" />
 
     <item
+        android:id="@+id/navigation_nextweek"
+        android:icon="@drawable/ic_nextweek_black_24dp"
+        android:title="@string/title_nextweek" />
+
+    <item
         android:id="@+id/navigation_template"
         android:icon="@drawable/ic_template_black_24dp"
         android:title="@string/title_template" />

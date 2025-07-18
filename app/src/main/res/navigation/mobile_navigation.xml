@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_week" />
 
     <fragment
+        android:id="@+id/navigation_nextweek"
+        android:name="net.syllabus.whatsoup.NextWeekFragment"
+        android:label="@string/title_nextweek"
+        tools:layout="@layout/fragment_nextweek" />
+
+    <fragment
         android:id="@+id/navigation_template"
         android:name="net.syllabus.whatsoup.TemplateFragment"
         android:label="@string/title_template"

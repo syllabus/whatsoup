@@ -2,21 +2,21 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="148"
-    android:viewportHeight="148">
+    android:viewportWidth="168"
+    android:viewportHeight="168">
     <path
         android:fillColor="#000000"
-        android:pathData="M30,74 v3 a27,27 1 0,0 88,0 v-3z" />
+        android:pathData="M40,84 v3 a27,27 1 0,0 88,0 v-3z" />
     <path
         android:fillColor="#000000"
-        android:pathData="M30,69 a20.7,20.7 0 0,1 40,-10 a25,25 1 0,0 -2,10z" />
+        android:pathData="M40,79 a20.7,20.7 0 0,1 40,-10 a25,25 1 0,0 -2,10z" />
     <path
         android:fillColor="#000000"
-        android:pathData="M72,69 a10,10 1 0,1 46,0z" />
+        android:pathData="M82,79 a10,10 1 0,1 46,0z" />
     <path
         android:fillColor="#000000"
-        android:pathData="M83,51 l-22,-15 l2,-3 l25,17z" />
+        android:pathData="M93,61 l-22,-15 l2,-3 l25,17z" />
     <path
         android:fillColor="#000000"
-        android:pathData="M89,48 l-10,-25 l3,-1 l11,27z" />
+        android:pathData="M99,58 l-10,-25 l3,-1 l11,27z" />
 </vector>

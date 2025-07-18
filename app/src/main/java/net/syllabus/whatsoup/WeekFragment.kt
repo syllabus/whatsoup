@@ -20,15 +20,11 @@ class WeekFragment : Fragment() {
 
     private val sharedPrefName = "meal_prefs"
     private val planName = "week_plan"
-    private val templateName = "week_template"
-    private val mealListName = "meal_list"
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: WeekPlanAdapter
-    private lateinit var generateButton: Button
+    private lateinit var shareButton: Button
 
-    private lateinit var mealList: MealList
-    private lateinit var template: WeekPlan
     private lateinit var weekPlan: WeekPlan
 
     private var _binding: FragmentWeekBinding? = null
@@ -50,13 +46,10 @@ class WeekFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        generateButton = requireView().findViewById(R.id.button_generate)
-        generateButton.setOnClickListener {
-            Log.d("WHATSOUP", "CLICK ON GENERATE")
-            weekPlan = mealList.randomWeek(template)
-            Log.d("WHATSOUP", "NEW PLAN: " + weekPlan)
-            adapter.updateData(weekPlan)
-            Log.d("WHATSOUP", "GENERATE IS DONE")
+        shareButton = requireView().findViewById(R.id.button_share)
+        shareButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON SHARE")
+            // TODO
         }
     }
 
@@ -77,50 +70,10 @@ class WeekFragment : Fragment() {
         _binding = null
     }
 
-    private fun saveData(){
-        val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
-        val editor = sharedPref?.edit()
-
-        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
-        val jsonWeekPlan = gson.toJson(weekPlan)
-        editor?.putString(planName, jsonWeekPlan)
-        Log.d("WHATSOUP", "saving plan " + jsonWeekPlan)
-
-        editor?.apply()
-    }
-
     private fun loadData() {
         val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
 
         val gson = GsonBuilder().enableComplexMapKeySerialization().create()
-        val jsonMeals = sharedPref?.getString(mealListName, null)
-        if (jsonMeals != null) {
-            val type = MealList::class.java
-            try {
-                mealList = gson.fromJson(jsonMeals, type)
-                Log.d("WHATSOUP", "loaded meals " + jsonMeals)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                mealList = MealList.default()
-            }
-        } else {
-            mealList = MealList.default()
-        }
-
-        val jsonTemplate = sharedPref?.getString(templateName, null)
-        if (jsonTemplate != null) {
-            val type = WeekPlan::class.java
-            try {
-                template = gson.fromJson(jsonTemplate, type)
-                Log.d("WHATSOUP", "loaded template " + jsonTemplate)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                template = WeekPlan.defaultTemplate()
-            }
-        } else {
-            template = WeekPlan.defaultTemplate()
-        }
-
         val jsonWeekPlan = sharedPref?.getString(planName, null)
         if(jsonWeekPlan != null){
             val type = WeekPlan::class.java
@@ -129,10 +82,10 @@ class WeekFragment : Fragment() {
                 Log.d("WHATSOUP", "loaded plan " + jsonWeekPlan)
             } catch (e: Exception) {
                 e.printStackTrace()
-                weekPlan = mealList.randomWeek(template)
+                weekPlan = MealList.default().randomWeek(WeekPlan.defaultTemplate())
             }
         } else {
-            weekPlan = mealList.randomWeek(template)
+            weekPlan = MealList.default().randomWeek(WeekPlan.defaultTemplate())
         }
 
     }
@@ -154,10 +107,10 @@ class WeekFragment : Fragment() {
             holder.dayTextView.text = day
 
             val currentLunch = displayedWeekPlan.getMeal(WeekPlan.PairKey(day, true))
-            holder.lunchEditText.setText(currentLunch?.name)
+            holder.lunchTextView.setText(currentLunch?.name)
 
             val currentDinner = displayedWeekPlan.getMeal(WeekPlan.PairKey(day, false))
-            holder.dinnerEditText.setText(currentDinner?.name)
+            holder.dinnerTextView.setText(currentDinner?.name)
 
             Log.d("WHATSOUP", "Display " + day + ": " + currentLunch + " AND " + currentDinner)
 
@@ -174,31 +127,8 @@ class WeekFragment : Fragment() {
 
         inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val dayTextView: TextView = itemView.findViewById(R.id.dayTextView)
-            val lunchEditText: EditText = itemView.findViewById(R.id.lunchEditText)
-            val dinnerEditText: EditText = itemView.findViewById(R.id.dinnerEditText)
-
-            init {
-                lunchEditText?.doAfterTextChanged {
-                    val d = dayTextView.text.toString()
-                    Log.d("WHATSOUP", "text changed for lunch " + d)
-                    displayedWeekPlan.setMeal(
-                        WeekPlan.PairKey(d, true),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
-                    )
-                    Log.d("WHATSOUP", "Save " + d + " lunch: " + it.toString())
-                    saveData()
-                }
-                dinnerEditText?.doAfterTextChanged {
-                    val d = dayTextView.text.toString()
-                    Log.d("WHATSOUP", "text changed for dinner " + d)
-                    displayedWeekPlan.setMeal(
-                        WeekPlan.PairKey(d, false),
-                        Meal(Meal.MealType.HARDCODED, it.toString())
-                    )
-                    Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
-                    saveData()
-                }
-            }
+            val lunchTextView: TextView = itemView.findViewById(R.id.lunchTextView)
+            val dinnerTextView: TextView = itemView.findViewById(R.id.dinnerTextView)
         }
     }
 }

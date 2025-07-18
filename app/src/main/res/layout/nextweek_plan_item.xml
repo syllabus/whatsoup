@@ -16,16 +16,16 @@
         android:layout_marginRight="8dp" />
 
 
-    <TextView
-        android:id="@+id/lunchTextView"
+    <EditText
+        android:id="@+id/lunchEditText"
         android:layout_width="0dp"
         android:text="Lunch"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginRight="8dp"/>
 
-    <TextView
-        android:id="@+id/dinnerTextView"
+    <EditText
+        android:id="@+id/dinnerEditText"
         android:layout_width="0dp"
         android:text="Dinner"
         android:layout_height="wrap_content"
