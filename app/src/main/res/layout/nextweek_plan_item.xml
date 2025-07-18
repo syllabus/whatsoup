@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -15,21 +16,70 @@
         android:textSize="16sp"
         android:layout_marginRight="8dp" />
 
-
-    <EditText
-        android:id="@+id/lunchEditText"
+    <LinearLayout
         android:layout_width="0dp"
-        android:text="Lunch"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginRight="8dp"/>
+        android:orientation="vertical"
+        android:layout_marginRight="8dp">
 
-    <EditText
-        android:id="@+id/dinnerEditText"
+        <EditText
+            android:id="@+id/lunchEditText"
+            android:layout_width="match_parent"
+            android:text="Lunch"
+            android:layout_height="wrap_content"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/lunchGenerateMeal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_generate_meal" />
+
+            <Button
+                android:id="@+id/lunchGenerateComposition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_generate_composition" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="0dp"
-        android:text="Dinner"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginRight="8dp">
+
+        <EditText
+            android:id="@+id/dinnerEditText"
+            android:layout_width="match_parent"
+            android:text="Dinner"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/dinnerGenerateMeal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_generate_meal" />
+
+            <Button
+                android:id="@+id/dinnerGenerateComposition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_generate_composition" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

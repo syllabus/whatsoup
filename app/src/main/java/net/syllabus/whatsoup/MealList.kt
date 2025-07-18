@@ -54,6 +54,17 @@ data class MealList (
         return plan
     }
 
+    fun random(type: Meal.MealType):String {
+        val plan = WeekPlan()
+
+        val localSimples = simples.toMutableList().shuffled().toMutableList()
+        val localAvec = avec.toMutableList().shuffled().toMutableList()
+        val localPlats = plats.toMutableList().shuffled().toMutableList()
+        val meal = randomMeal(Meal(type, "pain / eau"), localSimples, localAvec, localPlats)
+
+        return meal.name
+    }
+
 
     companion object {
         fun default(): MealList {

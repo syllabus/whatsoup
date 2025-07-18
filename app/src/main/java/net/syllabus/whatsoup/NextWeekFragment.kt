@@ -205,7 +205,11 @@ class NextWeekFragment : Fragment() {
         inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val dayTextView: TextView = itemView.findViewById(R.id.dayTextView)
             val lunchEditText: EditText = itemView.findViewById(R.id.lunchEditText)
+            val lunchGene: Button = itemView.findViewById(R.id.lunchGenerateMeal)
+            val lunchRate: Button = itemView.findViewById(R.id.lunchGenerateComposition)
             val dinnerEditText: EditText = itemView.findViewById(R.id.dinnerEditText)
+            val dinnerGene: Button = itemView.findViewById(R.id.dinnerGenerateMeal)
+            val dinnerRate: Button = itemView.findViewById(R.id.dinnerGenerateComposition)
 
             init {
                 lunchEditText?.doAfterTextChanged {
@@ -228,6 +232,10 @@ class NextWeekFragment : Fragment() {
                     Log.d("WHATSOUP", "Save " + d + " dinner: " + it.toString())
                     saveData()
                 }
+                lunchGene.setOnClickListener { lunchEditText.setText(mealList.random(Meal.MealType.MEAL)) }
+                lunchRate.setOnClickListener { lunchEditText.setText(mealList.random(Meal.MealType.BUILT)) }
+                dinnerGene.setOnClickListener { dinnerEditText.setText(mealList.random(Meal.MealType.MEAL)) }
+                dinnerRate.setOnClickListener { dinnerEditText.setText(mealList.random(Meal.MealType.BUILT)) }
             }
         }
     }

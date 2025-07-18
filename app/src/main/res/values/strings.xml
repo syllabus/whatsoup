@@ -21,4 +21,6 @@
     <string name="button_setweek">SAVE</string>
     <string name="button_getweek">LOAD</string>
     <string name="button_share">SHARE</string>
+    <string name="button_generate_meal">GENE</string>
+    <string name="button_generate_composition">RATE</string>
 </resources>
