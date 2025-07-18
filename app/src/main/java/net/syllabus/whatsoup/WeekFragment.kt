@@ -1,20 +1,21 @@
 package net.syllabus.whatsoup
 
 import android.app.Activity.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.GsonBuilder
 import net.syllabus.whatsoup.databinding.FragmentWeekBinding
+
 
 class WeekFragment : Fragment() {
 
@@ -49,7 +50,12 @@ class WeekFragment : Fragment() {
         shareButton = requireView().findViewById(R.id.button_share)
         shareButton.setOnClickListener {
             Log.d("WHATSOUP", "CLICK ON SHARE")
-            // TODO
+            val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+            val jsonWeekPlan = gson.toJson(weekPlan)
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.setType("text/whatsoup-menu")
+            sharingIntent.putExtra(Intent.EXTRA_TEXT,jsonWeekPlan)
+            startActivity(Intent.createChooser(sharingIntent, "Share using"))
         }
     }
 
