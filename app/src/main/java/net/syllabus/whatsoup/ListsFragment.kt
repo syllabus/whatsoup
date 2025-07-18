@@ -202,9 +202,9 @@ class ListsFragment : Fragment() {
                 stringEditText.doAfterTextChanged {
                     if (pos >= 0) {
                         Log.d("WHATSOUP", "text " + pos + " changed " + it.toString())
-                        //displayedList.set(pos, it.toString())
+                        displayedList.set(pos, it.toString())
                         Log.d("WHATSOUP", "Save " + pos + " string: " + it.toString())
-                        //saveData()
+                        saveData()
                     }
                 }
                 removeButton.setOnClickListener {
