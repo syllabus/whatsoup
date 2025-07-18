@@ -179,6 +179,9 @@ class ListsFragment : Fragment() {
         ) {
             Log.d("WHATSOUP", "Binding ItemHolder " + position)
             val string = displayedList.get(position)
+            if (holder.stringEditText.hasFocus()) {
+                holder.stringEditText.clearFocus()
+            }
             holder.stringEditText.setText(string)
             holder.pos = position
 
@@ -200,7 +203,7 @@ class ListsFragment : Fragment() {
 
             init {
                 stringEditText.doAfterTextChanged {
-                    if (pos >= 0) {
+                    if (pos >= 0 && stringEditText.hasFocus()) {
                         Log.d("WHATSOUP", "text " + pos + " changed " + it.toString())
                         displayedList.set(pos, it.toString())
                         Log.d("WHATSOUP", "Save " + pos + " string: " + it.toString())

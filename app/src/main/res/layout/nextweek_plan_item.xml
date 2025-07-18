@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
+    android:padding="0dp"
     android:gravity="center_vertical">
 
     <TextView
@@ -37,13 +37,15 @@
             <Button
                 android:id="@+id/lunchGenerateMeal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:padding="0dp"
                 android:text="@string/button_generate_meal" />
 
             <Button
                 android:id="@+id/lunchGenerateComposition"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:padding="0dp"
                 android:text="@string/button_generate_composition" />
         </LinearLayout>
 
@@ -69,13 +71,15 @@
             <Button
                 android:id="@+id/dinnerGenerateMeal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:padding="0dp"
                 android:text="@string/button_generate_meal" />
 
             <Button
                 android:id="@+id/dinnerGenerateComposition"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:padding="0dp"
                 android:text="@string/button_generate_composition" />
         </LinearLayout>
 
