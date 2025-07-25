@@ -3,20 +3,22 @@ package net.syllabus.whatsoup
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toFile
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.GsonBuilder
 import net.syllabus.whatsoup.databinding.ActivityMain2Binding
 import java.io.File
+import java.net.URL
 
 
 class MainActivity2 : AppCompatActivity() {
@@ -34,12 +36,14 @@ class MainActivity2 : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main2)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main2) as NavHostFragment
+        val navController = navHostFragment.navController
+        //val navController = findNavController(R.id.nav_host_fragment_activity_main2)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_week, R.id.navigation_template
+                R.id.navigation_week, R.id.navigation_nextweek, R.id.navigation_template, R.id.navigation_lists
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -54,49 +58,84 @@ class MainActivity2 : AppCompatActivity() {
     }
 
     fun handleshare() {
+        Log.e("WHATSOUP", "===============   HANDLE SHARE   ====================")
+        Log.e("WHATSOUP","onSharedIntent: receivedIntent: " + intent)
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 try {
-                    handleSendUrl(intent) // Handle text being sent
+                    handleSendUrl(intent)
+                } catch (e: Exception) {
+                    Log.e("WHATSOUP", "share pb", e)
+                }
+                try {
+                    handleSendText(intent)
+                } catch (e: Exception) {
+                    Log.e("WHATSOUP", "share pb", e)
+                }
+            }
+            intent?.action == Intent.ACTION_VIEW -> {
+                try {
+                    handleSendUrl(intent)
+                } catch (e: Exception) {
+                    Log.e("WHATSOUP", "share pb", e)
+                }
+                try {
+                    handleSendText(intent)
                 } catch (e: Exception) {
                     Log.e("WHATSOUP", "share pb", e)
                 }
             }
         }
+        Log.e("WHATSOUP", "=====================================================")
     }
 
     private fun handleSendText(intent: Intent) {
         intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-            Log.e("WHATSOUP", it)
+            readUri(Uri.parse(it))
         }
     }
 
     private fun handleSendUrl(intent: Intent) {
         (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
-            val s = readUri(it)
-            Log.e("WHATSOUP", s)
-            saveData(s)
+            readUri(it)
         }
     }
 
-    fun readUri(uri: Uri): String {
-        val file = createTempFile()
-        uri?.let { this.contentResolver.openInputStream(uri) }.use { input ->
-            file.outputStream().use { output ->
-                input?.copyTo(output)
-            }
-        }
-        val s: String = file.readText()
-        file.delete()
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun readUri(uri: Uri) {
+            Thread() {
+                run {
+                    var s = ""
+                    try {
+                        val file = createTempFile()
+                        uri?.let { this.contentResolver.openInputStream(uri) }.use { input ->
+                            file.outputStream().use { output ->
+                                input?.copyTo(output)
+                            }
+                        }
+                        s = file.readText()
+                        file.delete()
 
-        return s
+                    } catch (e: Exception) {
+                        s = URL(uri.toString()).openStream().readAllBytes().decodeToString()
+                    }
+                    Log.e("WHATSOUP", s)
+                    saveData(s)
+                    finish();
+                    val openMainActivity = Intent(
+                        applicationContext,
+                        MainActivity2::class.java
+                    )
+                    openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    startActivity(openMainActivity)
+                }
+            }.start()
     }
 
     private fun saveData(jsonWeekPlan: String){
         val sharedPref = this.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
         val editor = sharedPref?.edit()
 
-        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
         editor?.putString(planName, jsonWeekPlan)
         Log.d("WHATSOUP", "saving plan " + jsonWeekPlan)
 
