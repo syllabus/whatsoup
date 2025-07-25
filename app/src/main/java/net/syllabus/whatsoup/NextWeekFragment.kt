@@ -83,8 +83,18 @@ class NextWeekFragment : Fragment() {
             val sharedPref = this.getActivity()?.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
             val gson = GsonBuilder().enableComplexMapKeySerialization().create()
             val jsonWeekPlan = sharedPref?.getString(planName, null)
-            val type = WeekPlan::class.java
-            weekPlan = gson.fromJson(jsonWeekPlan, type)
+            if(jsonWeekPlan != null){
+                val type = WeekPlan::class.java
+                try {
+                    weekPlan = gson.fromJson(jsonWeekPlan, type)
+                    Log.d("WHATSOUP", "loaded plan " + jsonWeekPlan)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    weekPlan = mealList.randomWeek(template)
+                }
+            } else {
+                weekPlan = mealList.randomWeek(template)
+            }
             adapter.updateData(weekPlan)
             Log.d("WHATSOUP", "LOAD IS DONE")
         }

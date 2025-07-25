@@ -23,6 +23,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/whatsoup-menu" />
                 <data android:mimeType="text/json" />
+                <data android:mimeType="text/x-pascal" />
             </intent-filter>
         </activity>
     </application>

@@ -53,7 +53,9 @@ class WeekFragment : Fragment() {
             val gson = GsonBuilder().enableComplexMapKeySerialization().create()
             val jsonWeekPlan = gson.toJson(weekPlan)
             val sharingIntent = Intent(Intent.ACTION_SEND)
-            sharingIntent.setType("text/whatsoup-menu")
+            //sharingIntent.setType("text/whatsoup-menu")
+            //sharingIntent.setType("application/prs.implied-object+json")
+            sharingIntent.setType("text/x-pascal")
             sharingIntent.putExtra(Intent.EXTRA_TEXT,jsonWeekPlan)
             startActivity(Intent.createChooser(sharingIntent, "Share using"))
         }

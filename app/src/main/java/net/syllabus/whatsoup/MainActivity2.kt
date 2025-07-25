@@ -46,6 +46,7 @@ class MainActivity2 : AppCompatActivity() {
         val receivedType = receivedIntent.type
 
         if (receivedAction == Intent.ACTION_SEND) {
+            Log.e("WHATSOUP", "onSharedIntent: " + receivedType + " shared")
             if (receivedType!!.startsWith("text/")) {
                 val receivedText = receivedIntent
                     .getStringExtra(Intent.EXTRA_TEXT)
