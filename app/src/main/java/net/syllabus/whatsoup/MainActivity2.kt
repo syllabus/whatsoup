@@ -16,6 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.GsonBuilder
 import net.syllabus.whatsoup.databinding.ActivityMain2Binding
 import java.io.File
 import java.net.URL
@@ -25,6 +26,8 @@ class MainActivity2 : AppCompatActivity() {
 
     private val sharedPrefName = "meal_prefs"
     private val planName = "week_plan"
+    private val nextplanName = "nextweek_plan"
+    private val templateName = "week_template"
 
     private lateinit var binding: ActivityMain2Binding
 
@@ -133,11 +136,33 @@ class MainActivity2 : AppCompatActivity() {
     }
 
     private fun saveData(jsonWeekPlan: String){
+
+        val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+        val type = WeekPlan::class.java
+        val weekPlan = gson.fromJson(jsonWeekPlan, type)
+
+        var destination = nextplanName
+        for (day in weekPlan.getDays()) {
+            for (lunch in arrayOf(true, false)) {
+                val key = WeekPlan.PairKey(day, lunch)
+                val meal = weekPlan.getMeal(key)
+                if (meal == null) {
+                    weekPlan.setMeal(key, Meal(Meal.MealType.HARDCODED, "pain / eau"))
+                } else {
+                    if (meal.type != Meal.MealType.HARDCODED) {
+                        destination = templateName
+                    }
+                }
+            }
+        }
+
+        val jsonWeekPlanFixed = gson.toJson(weekPlan)
+
         val sharedPref = this.getSharedPreferences(sharedPrefName, MODE_PRIVATE)
         val editor = sharedPref?.edit()
 
-        editor?.putString(planName, jsonWeekPlan)
-        Log.d("WHATSOUP", "saving plan " + jsonWeekPlan)
+        editor?.putString(destination, jsonWeekPlanFixed)
+        Log.d("WHATSOUP", "saving "+destination+" " + jsonWeekPlanFixed)
 
         editor?.apply()
     }

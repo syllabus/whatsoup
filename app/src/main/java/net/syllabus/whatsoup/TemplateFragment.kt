@@ -1,6 +1,7 @@
 package net.syllabus.whatsoup
 
 import android.app.Activity.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ class TemplateFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TemplateAdapter
     private lateinit var resetButton: Button
+    private lateinit var shareButton: Button
 
     private lateinit var template: WeekPlan
 
@@ -58,7 +60,19 @@ class TemplateFragment : Fragment() {
             adapter.updateData(template)
             Log.d("WHATSOUP", "RESET IS DONE")
         }
-    }
+        shareButton = requireView().findViewById(R.id.button_share)
+        shareButton.setOnClickListener {
+            Log.d("WHATSOUP", "CLICK ON SHARE")
+            val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+            val jsonWeekPlan = gson.toJson(template)
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            //sharingIntent.setType("text/whatsoup-menu")
+            //sharingIntent.setType("application/prs.implied-object+json")
+            sharingIntent.setType("text/x-pascal")
+            sharingIntent.putExtra(Intent.EXTRA_SUBJECT,"weekplan.whatsou.p")
+            sharingIntent.putExtra(Intent.EXTRA_TEXT,jsonWeekPlan)
+            startActivity(Intent.createChooser(sharingIntent, "Share using"))
+        }    }
 
     override fun onResume() {
         super.onResume()

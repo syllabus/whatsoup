@@ -18,11 +18,23 @@
             android:scrollbars="vertical"
             tools:listitem="@layout/template_item" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <Button
             android:id="@+id/button_default"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/button_default" />
+        <Button
+            android:id="@+id/button_share"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/button_share" />
+    </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>
