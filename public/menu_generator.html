@@ -27,8 +27,14 @@
 			var d = new Date();
 			var langs = document.getElementById("languages")
 			days.innerHTML = "";
+			var names = new Set();
 			for (var i = 0; i < 21; i++) {
 				var day = getDayLabel(langs.value, d)
+				
+				while (names.has(day)) {
+					day = day + "'";
+				}
+				names.add(day);
 				
 				days.innerHTML +="<input type=\"CHECKBOX\" "+(i<7?"checked":"")+" onclick=\"generate()\" />&nbsp;<input value=\""+day+"\" onchange=\"generate()\" /><br />"
 				
@@ -49,25 +55,30 @@
 			var dayschildren = document.getElementById("days").childNodes;
 			var checked = false;
 			var json = []
+			var names = new Set();
 			for (var i = 0; i < dayschildren.length; i++) {
 				if (dayschildren[i].type === "checkbox") {
 					checked = dayschildren[i].checked;
 				}
 				if (checked && dayschildren[i].type === "text") {
 					day = dayschildren[i].value;
-					json.push([{"day":day, lunch:true},{"name":"nothing", type:"MEAL"}])
-					json.push([{"day":day, lunch:false},{"name":"nothing", type:"MEAL"}])
+					if (!names.has(day)) {
+						names.add(day);
+						json.push([{"day":day, lunch:true},{"name":"nothing", type:"MEAL"}])
+						json.push([{"day":day, lunch:false},{"name":"nothing", type:"MEAL"}])
+					}
 				}
 			}
 			var tag = document.getElementById("json");
-			tag.innerText = JSON.stringify(json);
+			tag.innerText = JSON.stringify({"meals":json});
 		}
 		
 		function share() {
 			var tag = document.getElementById("json");
+			alert(tag.textContent);
 			navigator.share({
-			  //title: 'template.whatsou.p',
-			  text: tag.innerText
+			  title: 'template.whatsou.p',
+			  text: tag.textContent
 			  //url: 'https://syllabus.github.io/whatsoup/public/menu_generator.html'
 			})		
 		}

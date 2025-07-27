@@ -63,6 +63,7 @@ class MainActivity2 : AppCompatActivity() {
     fun handleshare() {
         Log.e("WHATSOUP", "===============   HANDLE SHARE   ====================")
         Log.e("WHATSOUP","onSharedIntent: receivedIntent: " + intent)
+        onSharedIntent()
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 try {
@@ -108,21 +109,23 @@ class MainActivity2 : AppCompatActivity() {
     fun readUri(uri: Uri) {
             Thread() {
                 run {
-                    var s = ""
-                    try {
-                        val file = createTempFile()
-                        uri?.let { this.contentResolver.openInputStream(uri) }.use { input ->
-                            file.outputStream().use { output ->
-                                input?.copyTo(output)
+                    var s: String? = intent.getStringExtra(Intent.EXTRA_TEXT)
+                    if (s == null) {
+                        try {
+                            val file = createTempFile()
+                            uri?.let { this.contentResolver.openInputStream(uri) }.use { input ->
+                                file.outputStream().use { output ->
+                                    input?.copyTo(output)
+                                }
                             }
-                        }
-                        s = file.readText()
-                        file.delete()
+                            s = file.readText()
+                            file.delete()
 
-                    } catch (e: Exception) {
-                        s = URL(uri.toString()).openStream().readAllBytes().decodeToString()
+                        } catch (e: Exception) {
+                            s = URL(uri.toString()).openStream().readAllBytes().decodeToString()
+                        }
                     }
-                    Log.e("WHATSOUP", s)
+                    Log.e("WHATSOUP", s!!)
                     saveData(s)
                     finish();
                     val openMainActivity = Intent(
@@ -180,7 +183,6 @@ class MainActivity2 : AppCompatActivity() {
             Log.e("WHATSOUP", "dataddd: " + receivedIntent.data)
             Log.e("WHATSOUP", "extra_text: " + receivedIntent.getStringExtra(Intent.EXTRA_TEXT))
             Log.e("WHATSOUP", "extra_stream: " + receivedIntent.extras)
-            Log.e("WHATSOUP", "ZE STRING ------  : " + share())
 
         }catch (e: Exception) {
             Log.e("WHATSOUP", "share pb", e)
