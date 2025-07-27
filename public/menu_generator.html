@@ -14,7 +14,8 @@
 		function init() {
 			var langs = document.getElementById("languages")
 			let userLanguage = navigator.language || navigator.userLanguage;			
-			let userLanguages = navigator.languages;
+			let userLanguages = [...navigator.languages];
+			userLanguages.push("grd");
 			for (var i = 0; i < userLanguages.length; i++) {
 				langs.innerHTML += "<option"+(userLanguages[i]===userLanguage?" SELECTED":"")+">"+userLanguages[i]+"</option>";
 			}
@@ -27,13 +28,21 @@
 			var langs = document.getElementById("languages")
 			days.innerHTML = "";
 			for (var i = 0; i < 21; i++) {
-				var day = d.toLocaleDateString(langs.value,{weekday: 'long'});
+				var day = getDayLabel(langs.value, d)
 				
 				days.innerHTML +="<input type=\"CHECKBOX\" "+(i<7?"checked":"")+" onclick=\"generate()\" />&nbsp;<input value=\""+day+"\" onchange=\"generate()\" /><br />"
 				
 				d = new Date(d.getTime() + 24*3_600_000);
 			}
 			generate();
+		}
+		
+		var grd = ['gromanche', 'lendi', 'mordi', 'credi', 'joudi', 'dredi', 'sadi'];
+		function getDayLabel(lang, d) {
+			if (lang === "grd") {
+				return grd[d.getDay()];
+			}
+			return d.toLocaleDateString(lang,{weekday: 'long'});
 		}
 		
 		function generate() {
@@ -46,6 +55,7 @@
 				}
 				if (checked && dayschildren[i].type === "text") {
 					day = dayschildren[i].value;
+					json.push([{"day":day, lunch:true},{"name":"nothing", type:"MEAL"}])
 					json.push([{"day":day, lunch:false},{"name":"nothing", type:"MEAL"}])
 				}
 			}
@@ -56,9 +66,9 @@
 		function share() {
 			var tag = document.getElementById("json");
 			navigator.share({
-			  title: 'template.whatsou.p',
-			  text: tag.innerText,
-			  //url: 'https://www.clonesite.com'  // This is replaced by override
+			  //title: 'template.whatsou.p',
+			  text: tag.innerText
+			  //url: 'https://syllabus.github.io/whatsoup/public/menu_generator.html'
 			})		
 		}
 
